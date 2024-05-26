@@ -23,7 +23,7 @@
 <nav class="navbar">
 	<div class="container-fluid">
 		<button class="btn icon-button me-3" on:click={handleProfileClick}>
-			<img src="../../../assets/user.png" alt="Menu" />
+			<img src="/src/assets/user.png" alt="Menu" />
 		</button>
 
 		<div class="search-bar mx-auto">
@@ -38,7 +38,7 @@
 		</div>
 
 		<button class="btn icon-button ms-3" on:click={handleMenuClick}>
-			<img src="../../../assets/charte-graphique.png" alt="Profile" />
+			<img src="src/assets/charte-graphique.png" alt="Profile" />
 		</button>
 	</div>
 </nav>
