@@ -38,7 +38,7 @@
 		</div>
 
 		<button class="btn icon-button ms-3" on:click={handleMenuClick}>
-			<img src="../../..//assets/charte-graphique.png" alt="Profile" />
+			<img src="../../../assets/charte-graphique.png" alt="Profile" />
 		</button>
 	</div>
 </nav>
