@@ -57,7 +57,8 @@
     .chart-container {
         margin: 0 auto; /* Pour centrer horizontalement */
         text-align: center; /* Pour centrer le canvas dans la div */
-        padding-bottom: 3rem;
+        padding-bottom: 10rem;
+		padding-top: 10rem;
     }
 
     canvas {

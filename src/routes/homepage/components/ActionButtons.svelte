@@ -53,7 +53,7 @@
     }
 </style>
 
-<div class="container-custom">
+<div class="container-custom mt-5">
 	<button
 		class="button button-retrait"
 		on:click={handleRetraitClick}

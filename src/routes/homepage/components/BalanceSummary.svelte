@@ -39,8 +39,8 @@
         text-align: center;
         color: white;
         padding: 1rem;
-				padding-top: 5rem;
-        padding-bottom: 2rem;
+		padding-top: 10rem;
+        padding-bottom: 5rem;
         /* Remplacez les valeurs ci-dessous avec votre dégradé personnalisé ou couleur */
     }
 

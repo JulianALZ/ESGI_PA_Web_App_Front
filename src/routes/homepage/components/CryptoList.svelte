@@ -92,13 +92,14 @@
         background-color: #12343b;
         padding-top: 3rem;
         padding-bottom: 3rem;
-				padding-left: 3rem;
-				padding-right: 3rem;
+		padding-left: 3rem;
+		padding-right: 3rem;
+		min-height: 100vh;
 
     }
 </style>
 
-<div class="container-custom">
+<div class="container-custom ">
 	{#each cryptoList as crypto}
 		<div class="crypto-container">
 			<img src={crypto.logo} alt={crypto.name} class="crypto-logo" />
