@@ -22,17 +22,29 @@
 		return colors;
 	}
 
-	// Simuler des données dynamiques
-	function fetchData() {
-		// Simule une réponse d'API
-		return {
-			labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-			data: [12, 19, 3, 5, 2, 3]
-		};
+	// Fonction pour récupérer les données depuis l'API
+	async function fetchData() {
+		try {
+			const response = await fetch('https://esgi-pa-web-app-back.vercel.app/api/positions');
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+			const data = await response.json();
+			return {
+				labels: data.symbols,
+				data: data.percentages
+			};
+		} catch (error) {
+			console.error('Error fetching positions:', error);
+			return {
+				labels: [],
+				data: []
+			};
+		}
 	}
 
-	function updateChartData() {
-		const response = fetchData();
+	async function updateChartData() {
+		const response = await fetchData();
 		chartData.labels = response.labels;
 		chartData.datasets[0].data = response.data;
 		chartData.datasets[0].backgroundColor = generateColors(response.data.length);
@@ -70,6 +82,7 @@
 	let total;
 	$: total = getTotal(chartData.datasets[0].data);
 </script>
+
 
 <style>
 	body {
@@ -172,7 +185,7 @@
 			{#each chartData.labels as label, index}
 				<li>
 					<div class="color-box" style="background-color: {chartData.datasets[0].backgroundColor[index]};"></div>
-					<span>{label}: {chartData.datasets[0].data[index]} ({getPercentage(chartData.datasets[0].data[index], total)}%)</span>
+					<span>{label}: {getPercentage(chartData.datasets[0].data[index], total)}%</span>
 				</li>
 			{/each}
 		</ul>

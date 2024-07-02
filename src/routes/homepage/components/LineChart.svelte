@@ -5,13 +5,26 @@
 	Chart.register(...registerables);
 
 	let chart = null;
-
-	// Données fictives pour le graphique
-	let data = [65, 59, 80, 81, 56, 55, 40, 70, 85, 50, 45, 60];
+	let data = [];
 
 	let ctx;
 
-	onMount(() => {
+	// Appel API pour récupérer les données du portefeuille
+	async function fetchWalletData() {
+		try {
+			const response = await fetch(`https://esgi-pa-web-app-back.vercel.app/api/wallet-historic`);
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+			const apiData = await response.json();
+			data = apiData.wallets;
+		} catch (error) {
+			console.error('Erreur lors de la récupération des données du portefeuille:', error);
+		}
+	}
+
+	onMount(async () => {
+		await fetchWalletData();
 		chart = new Chart(ctx, {
 			type: 'line',
 			data: {

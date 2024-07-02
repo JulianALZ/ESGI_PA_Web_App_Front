@@ -2,25 +2,25 @@
 	import { onMount } from 'svelte';
 
 	// Valeurs par défaut fictives
-	let totalAmount = '624,33 $';
-	let changeAmount = '+76,09 $';
-	let changePercentage = '13,87%';
+	let totalAmount = '0,00 $';
+	let changeAmount = '0,00 $';
+	let changePercentage = '0,00%';
 
-	// Simuler un appel API
+	// Appel API pour récupérer les données de balance
 	async function fetchBalanceData() {
-		const response = await new Promise((resolve) => {
-			setTimeout(() => {
-				resolve({
-					totalAmount: '624,33 $',
-					changeAmount: '+76,09 $',
-					changePercentage: '13,87%'
-				});
-			}, 1000); // Délai de 1 seconde
-		});
-
-		totalAmount = response.totalAmount;
-		changeAmount = response.changeAmount;
-		changePercentage = response.changePercentage;
+		try {
+			const response = await fetch(`https://esgi-pa-web-app-back.vercel.app/api/wallet-historic`);
+			if (!response.ok) {
+				throw new Error(`HTTP error! Status: ${response.status}`);
+			}
+			const data = await response.json();
+			console.log(data)
+			totalAmount = `${data.lastWallet} $`;
+			changeAmount = `${data.walletChange} $`;
+			changePercentage = `${data.percentageChange}%`;
+		} catch (error) {
+			console.error('Erreur lors de la récupération des données de balance:', error);
+		}
 	}
 
 	// Appeler fetchBalanceData() après que le composant soit monté
@@ -28,11 +28,14 @@
 		fetchBalanceData();
 	});
 </script>
-
 <div class="balance-summary ">
 	<h2>{totalAmount}</h2>
-	<p>{changeAmount} ({changePercentage})</p>
+	<p> + {changeAmount} </p>
 </div>
+<!--<div class="balance-summary ">-->
+<!--	<h2>{totalAmount}</h2>-->
+<!--	<p>{changeAmount} ({changePercentage})</p>-->
+<!--</div>-->
 
 <style>
     .balance-summary {
