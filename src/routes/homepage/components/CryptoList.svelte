@@ -5,19 +5,17 @@
 	let chart;
 	let chartData = {
 		labels: [],
-		datasets: [
-			{
-				data: [],
-				backgroundColor: []
-			}
-		]
+		datasets: [{
+			data: [],
+			backgroundColor: []
+		}]
 	};
 
 	// Fonction pour générer des couleurs dynamiques
 	function generateColors(count) {
 		const colors = [];
 		for (let i = 0; i < count; i++) {
-			colors.push(`hsl(${(i * 360 / count)}, 70%, 50%)`);
+			colors.push(`hsl(${i * 360 / count}, 70%, 50%)`);
 		}
 		return colors;
 	}
@@ -62,132 +60,79 @@
 				responsive: true,
 				plugins: {
 					legend: {
-						display: false // We handle legend ourselves
+						display: true, // Affichage de la légende
+						position: 'bottom',
+						labels: {
+							generateLabels: function(chart) {
+								const data = chart.data;
+								if (data.labels.length && data.datasets.length) {
+									return data.labels.map((label, i) => {
+										const value = data.datasets[0].data[i];
+										const total = data.datasets[0].data.reduce((acc, val) => acc + val, 0);
+										const percentage = ((value / total) * 100).toFixed(1);
+										return {
+											text: `${label}: ${percentage}%`,
+											fillStyle: data.datasets[0].backgroundColor[i],
+											hidden: false,
+											lineCap: 'butt',
+											lineDash: [],
+											lineDashOffset: 0,
+											lineJoin: 'miter',
+											strokeStyle: data.datasets[0].borderColor ? data.datasets[0].borderColor[i] : 'rgba(0,0,0,0)',
+											pointStyle: 'circle',
+											rotation: 0,
+											textAlign: 'left',
+											fontColor: '#FFFFFF' // Couleur de la légende
+										};
+									});
+								}
+								return [];
+							},
+							padding: 30,
+							color: '#FFFFFF' // Couleur de la légende
+						}
 					}
-				}
+				},
+				maintainAspectRatio: false
 			}
 		});
 
 		updateChartData();
 	});
-
-	function getPercentage(value, total) {
-		return ((value / total) * 100).toFixed(2);
-	}
-
-	function getTotal(data) {
-		return data.reduce((acc, value) => acc + value, 0);
-	}
-
-	let total;
-	$: total = getTotal(chartData.datasets[0].data);
 </script>
 
-
 <style>
-	body {
-		margin: 0; /* Enlève les marges par défaut pour supprimer les barres blanches */
+	.chart-card {
+		width: 80%;
+		max-width: 1200px;
+		margin: 4rem auto; /* Espacement relatif pour rendre la carte responsive */
+		padding: 2rem;
+		background-color: #2C2F33;
+		border-radius: 10px;
+		box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+	}
+
+	.chart-header {
+		text-align: center;
+		font-size: 1.5rem;
+		color: white;
+		margin-bottom: 2rem;
 	}
 
 	.chart-container {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		background-color: #12343b;
-		padding: 3rem;
-		min-height: 100vh;
-		box-sizing: border-box; /* Inclut padding et border dans les dimensions de l'élément */
-		flex-direction: column; /* Par défaut, affiche la légende sous le graphique */
+		position: relative;
+		height: 60vh; /* Utiliser des unités relatives pour la hauteur */
 	}
 
-	.chart-section {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		padding-right: 0; /* Initialement sans padding droit */
-	}
-
-	.legend-section {
-		padding-top: 2rem;
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-	}
-
-	#myPieChart {
-		width: 250px; /* Taille du graphique ajustée pour les petits écrans */
-		height: 250px; /* Maintient le rapport d'aspect */
-	}
-
-	.data-list {
-		list-style-type: none;
-		padding: 0;
-		margin-top: 0;
-	}
-
-	.data-list li {
-		margin: 10px 0;
-		display: flex;
-		align-items: center;
-		justify-content: left; /* Aligne les éléments à gauche pour une meilleure lisibilité */
-		font-size: 1rem; /* Taille de police appropriée pour la lisibilité */
-		color: white; /* Texte blanc pour contraster avec le fond sombre */
-		padding-left: 1rem; /* Ajoute un padding à gauche pour décaler les éléments */
-	}
-
-	.color-box {
-		width: 20px;
-		height: 20px;
-		display: inline-block;
-		margin-right: 10px;
-		border-radius: 3px; /* Ajoute un léger arrondi aux couleurs */
-	}
-
-	@media (min-width: 768px) {
-		.chart-container {
-			flex-direction: row; /* Affiche la légende à droite du graphique sur les écrans moyens et grands */
-		}
-		.chart-section {
-			flex: 1;
-			justify-content: flex-end;
-			padding-right: 2rem; /* Ajoute de l'espace entre le graphique et la légende */
-		}
-		.legend-section {
-			flex: 1;
-			padding-left: 2rem;
-			padding-top: 0;
-			align-items: center; /* Centre les éléments de la légende */
-		}
-		#myPieChart {
-			width: 300px; /* Augmente la taille du graphique pour les écrans moyens */
-			height: 300px;
-		}
-	}
-
-	@media (min-width: 1200px) {
-		.legend-section {
-			padding-left: 6rem; /* Augmente le padding left sur les écrans très larges */
-		}
-		#myPieChart {
-			width: 350px; /* Augmente la taille du graphique pour les écrans très larges */
-			height: 350px;
-		}
+	canvas {
+		display: block;
+		max-width: 100%;
 	}
 </style>
 
-<div class="chart-container">
-	<div class="chart-section">
+<div class="chart-card">
+	<div class="chart-header">Répartitions des possitions</div>
+	<div class="chart-container">
 		<canvas id="myPieChart"></canvas>
-	</div>
-	<div class="legend-section">
-		<ul class="data-list">
-			{#each chartData.labels as label, index}
-				<li>
-					<div class="color-box" style="background-color: {chartData.datasets[0].backgroundColor[index]};"></div>
-					<span>{label}: {getPercentage(chartData.datasets[0].data[index], total)}%</span>
-				</li>
-			{/each}
-		</ul>
 	</div>
 </div>

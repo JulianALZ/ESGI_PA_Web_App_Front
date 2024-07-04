@@ -15,9 +15,11 @@
 			}
 			const data = await response.json();
 			console.log(data)
-			totalAmount = `${data.lastWallet} $`;
-			changeAmount = `${data.walletChange} $`;
-			changePercentage = `${data.percentageChange}%`;
+			totalAmount = `${Number(data.lastWallet).toFixed(2)} $`;
+			changeAmount = `${Number(data.walletChange).toFixed(2)} $`;
+			changePercentage = data.percentageChange !== null && data.percentageChange !== undefined
+					? `${Number(data.percentageChange).toFixed(2)}%`
+					: 'N/A';
 		} catch (error) {
 			console.error('Erreur lors de la récupération des données de balance:', error);
 		}
@@ -28,14 +30,14 @@
 		fetchBalanceData();
 	});
 </script>
-<div class="balance-summary ">
-	<h2>{totalAmount}</h2>
-	<p> + {changeAmount} </p>
-</div>
 <!--<div class="balance-summary ">-->
 <!--	<h2>{totalAmount}</h2>-->
-<!--	<p>{changeAmount} ({changePercentage})</p>-->
+<!--	<p> + {changeAmount} </p>-->
 <!--</div>-->
+<div class="balance-summary ">
+	<h2>{totalAmount}</h2>
+	<p>{changeAmount} ({changePercentage})</p>
+</div>
 
 <style>
     .balance-summary {
