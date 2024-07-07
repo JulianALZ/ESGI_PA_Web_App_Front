@@ -1,22 +1,49 @@
 <script>
 	import { loadStripe } from '@stripe/stripe-js';
+	import {jwtDecode} from "jwt-decode";
 
 	let stripePromise = loadStripe('pk_test_51PSnc4P6OFtHWfqTRIA8C5WCF6JmaZtI54b9ZCETjjhS9yQXEKrUmTw1QoyCWN0nDqnVIVbZGkq2EvCJeUOkhcEe00b71upSJB');
+	let userId = 1;
+
+	// export const redirectToCheckout = async (userId) => {
+	// 	const stripe = await stripePromise;
+	//
+	// 	const { error } = await stripe.redirectToCheckout({
+	// 		mode: 'payment',
+	// 		lineItems: [
+	// 			{
+	// 				price: 'price_1Hh1tW2eZvKYlo2CP9zwbDfV', // Remplacez par l'ID de votre prix Stripe
+	// 				quantity: 1
+	// 			}
+	// 		],
+	// 		successUrl: window.location.origin + '/success',
+	// 		cancelUrl: window.location.origin + '/cancel',
+	// 		metadata : {
+	// 			userId: userId,
+	// 		}
+	//
+	// 	});
+	//
+	// 	if (error) {
+	// 		console.error('Stripe checkout error', error);
+	// 	}
+	// };
+
+
 
 	async function handleRetraitClick() {
-		const stripe = await stripePromise;
-		const { error } = await stripe.redirectToCheckout({
-			mode: 'payment',
-			lineItems: [{ price: 'price_1Hh1tW2eZvKYlo2CP9zwbDfV', quantity: 1 }],
-			successUrl: `${window.location.origin}/success`,
-			cancelUrl: `${window.location.origin}/cancel`,
-		});
-		if (error) console.error('Stripe checkout error', error);
+		console.log('Retrait clicked');
 	}
 
 	async function handleDepotClick() {
-		window.location.href = 'https://donate.stripe.com/test_eVa9E6gc75xx7PG7ss';
+		const token = localStorage.getItem('token');
+		const decodedToken = jwtDecode(token);
+		const userId = decodedToken.id;
+		// console.log("userId =", userId);
+		window.location.href = 'https://donate.stripe.com/test_eVa9E6gc75xx7PG7ss?client_reference_id='+userId;
 	}
+
+
 </script>
 
 <style>

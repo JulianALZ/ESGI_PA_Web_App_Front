@@ -1,5 +1,6 @@
 <script>
 	import { onMount } from 'svelte';
+	import {jwtDecode} from "jwt-decode";
 
 	// Valeurs par défaut fictives
 	let totalAmount = '0,00 $';
@@ -9,17 +10,27 @@
 	// Appel API pour récupérer les données de balance
 	async function fetchBalanceData() {
 		try {
-			const response = await fetch(`https://esgi-pa-web-app-back.vercel.app/api/wallet-historic`);
-			if (!response.ok) {
-				throw new Error(`HTTP error! Status: ${response.status}`);
-			}
+			const token = localStorage.getItem('token');
+			const decodedToken = jwtDecode(token);
+			const userId = decodedToken.id;
+
+			const response = await fetch('https://esgi-pa-web-app-back.vercel.app/api/wallet-historic', {
+				method: 'post',
+				headers: {
+					'Content-Type': 'application/json'
+				},
+				body: JSON.stringify({ userId })
+			});
+
 			const data = await response.json();
-			console.log(data)
+			console.log("wallet-historic balance = ", data)
+
 			totalAmount = `${Number(data.lastWallet).toFixed(2)} $`;
-			changeAmount = `${Number(data.walletChange).toFixed(2)} $`;
+			changeAmount = `${Number(data.changeAmount).toFixed(2)} $`;
 			changePercentage = data.percentageChange !== null && data.percentageChange !== undefined
 					? `${Number(data.percentageChange).toFixed(2)}%`
 					: 'N/A';
+
 		} catch (error) {
 			console.error('Erreur lors de la récupération des données de balance:', error);
 		}
@@ -30,10 +41,7 @@
 		fetchBalanceData();
 	});
 </script>
-<!--<div class="balance-summary ">-->
-<!--	<h2>{totalAmount}</h2>-->
-<!--	<p> + {changeAmount} </p>-->
-<!--</div>-->
+
 <div class="balance-summary ">
 	<h2>{totalAmount}</h2>
 	<p>{changeAmount} ({changePercentage})</p>
